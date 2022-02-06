@@ -1,0 +1,14 @@
+# Ignore dataset.
+data/*
+
+# Ignore output data.
+*.jpg
+*.npy
+*.faiss
+log.txt
+
+# Ignore Python cache.
+__pycache__
+
+# Do not ignore .gitkeep files.
+!.gitkeep

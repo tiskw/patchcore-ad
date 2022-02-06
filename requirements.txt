@@ -1,0 +1,6 @@
+faiss-cpu==1.7.1
+opencv-python==4.5.2.52
+rich==11.0.0
+scikit-learn==0.24.2
+torch==1.8.1
+torchvision==0.9.1
