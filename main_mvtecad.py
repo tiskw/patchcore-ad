@@ -88,6 +88,7 @@ def main_traintest(args):
     Args:
         args (argparse.Namespace): Parsed command line arguments.
     """
+    rich.print("[yellow]Mode[/yellow]: [green]" + args.mode + "[/green]")
     rich.print(r"[yellow][Command line arguments][/yellow]")
     rich.print(vars(args))
 
@@ -137,6 +138,7 @@ def main_runall(args):
     Args:
         args (argparse.Namespace): Parsed command line arguments.
     """
+    rich.print("[yellow]Mode[/yellow]: [green]" + args.mode + "[/green]")
     rich.print("[yellow]Command line arguments:[/yellow]")
     rich.print(vars(args))
 
