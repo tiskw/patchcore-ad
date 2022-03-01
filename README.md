@@ -14,8 +14,8 @@ PatchCore is an anomaly detection algorithm that has the following features:
 * shows state-of-the-art performance on the MVTec AD dataset (as of Jun 2021).
 
 <div align="center">
-    <img width="80%" src="experiments/figures/patchcore_sketch.jpg" />
-    <img width="70%" src="experiments/figures/samples_mvtec_ad.jpg" />
+    <img width="750px" src="experiments/figures/patchcore_sketch.jpg" />
+    <img width="640px" src="experiments/figures/samples_mvtec_ad.jpg" />
 </div>
 
 
@@ -26,10 +26,9 @@ Usage
 
 The author recommends using Docker for keeping your environment clean.
 For example, you can create a new Docker container and enter into it
-by the following command:
+by the following command in the root directory of this repository:
 
 ```console
-cd ROOT_DIRECTORY_OF_THIS_REPO
 docker run --rm -it -v `pwd`:/workspace -w /workspace --name patchcore tiskw/patchcore:cpu-2022-01-29
 ```
 
@@ -37,21 +36,28 @@ See [this document](SETUP.md) for more details.
 
 ### Dataset
 
-Download the MVTec AD dataset [2] from
+You need to get the MVTec AD dataset [2] if you will reproduce [our experiments](experiments/README.md).
+If you don't have a plan to use the dataset, you can skip this subsection.
+You can download the MVTec AD dataset from
 [the official website](https://www.mvtec.com/company/research/datasets/mvtec-ad)
 (or [direct link to the data file](https://www.mydrive.ch/shares/38536/3830184030e49fe74747669442f0f282/download/420938113-1629952094/mvtec_anomaly_detection.tar.xz))
-and put it under `data/mvtec_ad/` directory. The following is an example
-to download the dataset from your terminal:
+and put it under `data/mvtec_ad/` directory.
+
+At first, please move to the `data/mvtec_ad/` directory.
 
 ```console
-cd ROOT_DIRECTORY_OF_THIS_REPO/data/mvtec_ad
+cd data/mvtec_ad/
+```
+
+Then, run the following command to download the MVTec AD dataset:
+
+```console
 wget "https://www.mydrive.ch/shares/38536/3830184030e49fe74747669442f0f282/download/420938113-1629952094/mvtec_anomaly_detection.tar.xz"
 ```
 
-Then, extract the downloaded data under the `data/mvtec_ad/` directory:
+Finally, extract the downloaded data:
 
 ```console
-cd ROOT_DIRECTORY_OF_THIS_REPO/data/mvtec_ad
 tar fJx mvtec_anomaly_detection.tar.xz
 ```
 
@@ -87,10 +93,9 @@ On the output directory `output_test/`, two types of files will be dumped:
 ### Replicate the experiments
 
 If you want to replicate [the experiments](experiments/README.md),
-run the following command:
+run the following command at the root directory of this repository:
 
 ```console
-cd ROOT_DIRECTORY_OF_THIS_REPO
 python3 main_mvtecad.py runall
 python3 main_mvtecad.py summarize
 ```
@@ -110,8 +115,8 @@ The performance of our implementation is quite close to the paper's score,
 therefore our implementation may have no serious issue.
 
 <div align="center">
-    <img width="45%" src="experiments/figures/MVTecAD_averaged_image-level_roc_auc_score.svg" />
-    <img width="45%" src="experiments/figures/MVTecAD_averaged_pixel-level_roc_auc_score.svg" />
+    <img width="480px" src="experiments/figures/MVTecAD_averaged_image-level_roc_auc_score.svg" />
+    <img width="480px" src="experiments/figures/MVTecAD_averaged_pixel-level_roc_auc_score.svg" />
 </div>
 
 See [this document](experiments/summary_comparison_with_the_paper.md)
@@ -125,8 +130,8 @@ tradeoff than Wide ResNet50 x2 which is used as a default backbone network
 in the original paper.
 
 <div align="center">
-    <img width="40%" src="experiments/figures/MVTecAD_image-level_roc_auc_score_backbones.svg" />
-    <img width="40%" src="experiments/figures/MVTecAD_pixel-level_roc_auc_score_backbones.svg" />
+    <img width="480px" src="experiments/figures/MVTecAD_image-level_roc_auc_score_backbones.svg" />
+    <img width="480px" src="experiments/figures/MVTecAD_pixel-level_roc_auc_score_backbones.svg" />
 </div>
 
 See [this document](experiments/summary_comparison_with_backbones.md)
@@ -143,7 +148,7 @@ however, basically, we can say that the normal ImageNet pre-trained model is eno
 good for PatchCore purposes.
 
 <div align="center">
-    <img width="40%" src="experiments/figures/MVTecAD_ResNet50_with_different_pretrainings.svg" />
+    <img width="480px" src="experiments/figures/MVTecAD_ResNet50_with_different_pretrainings.svg" />
 </div>
 
 See [this document](experiments/summary_comparison_pretraining.md)
@@ -184,6 +189,7 @@ References
 [3] I. Yalniz, H. Jegou, K. Chen, M. Paluri and D. Mahajan,
     "Billion-scale semi-supervised learning for image classification",
     arXiv, 2019.
+    [PDF](https://arxiv.org/pdf/1905.00546.pdf)
 
 [4] E. Fix and J. Hodges,
     ”Discriminatory Analysis. Nonparametric Discrimination: Consistency Properties”,
@@ -192,5 +198,6 @@ References
 [5] B. Scholkopf, R. Williamson, A. Smola, J. Shawe-Taylor and J. Platt,
     "Support Vector Method for Novelty Detection",
     NIPS, 1999.
+    [PDF](https://proceedings.neurips.cc/paper/1999/file/8725fb777f25776ffa9076e44fcfd776-Paper.pdf)
 
 [6] [hcw-00/PatchCore_anomaly_detection](https://github.com/hcw-00/PatchCore_anomaly_detection), GitHub.

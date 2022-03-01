@@ -1,5 +1,6 @@
 # Ignore dataset.
-data/*
+data/mvtec_ad/*
+!data/mvtec_ad/.gitkeep
 
 # Ignore output data.
 *.jpg
@@ -9,6 +10,3 @@ log.txt
 
 # Ignore Python cache.
 __pycache__
-
-# Do not ignore .gitkeep files.
-!.gitkeep

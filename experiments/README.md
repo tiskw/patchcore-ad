@@ -18,8 +18,8 @@ Experiment 1: Comparison with the original paper
 See [this document](summary_comparison_with_the_paper.md) for details.
 
 <div align="center">
-    <img width="40%" src="figures/MVTecAD_averaged_image-level_roc_auc_score.svg" />
-    <img width="40%" src="figures/MVTecAD_averaged_pixel-level_roc_auc_score.svg" />
+    <img width="480px" src="figures/MVTecAD_averaged_image-level_roc_auc_score.svg" />
+    <img width="480px" src="figures/MVTecAD_averaged_pixel-level_roc_auc_score.svg" />
 </div>
 
 
@@ -44,8 +44,8 @@ Experiment 2: Comparison of backborn networks
   like ResNet101/ResNet152 for exceeding ResNet50's score.
 
 <div align="center">
-    <img width="40%" src="figures/MVTecAD_image-level_roc_auc_score_backbones.svg" />
-    <img width="40%" src="figures/MVTecAD_pixel-level_roc_auc_score_backbones.svg" />
+    <img width="480px" src="figures/MVTecAD_image-level_roc_auc_score_backbones.svg" />
+    <img width="480px" src="figures/MVTecAD_pixel-level_roc_auc_score_backbones.svg" />
 </div>
 
 See [this document](summary_comparison_with_backbones.md) for details.
@@ -66,5 +66,5 @@ Experiment 3: Comparison of pre-trainings
   pre-trained model seems to be enough good for PatchCore purpose.
 
 <div align="center">
-    <img width="60%" src="figures/MVTecAD_ResNet50_with_different_pretrainings.svg" />
+    <img width="480px" src="figures/MVTecAD_ResNet50_with_different_pretrainings.svg" />
 </div>
