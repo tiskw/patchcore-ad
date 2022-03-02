@@ -29,7 +29,13 @@ For example, you can create a new Docker container and enter into it
 by the following command in the root directory of this repository:
 
 ```console
-docker run --rm -it -v `pwd`:/workspace -w /workspace --name patchcore tiskw/patchcore:cpu-2022-01-29
+docker run --rm -it -v `pwd`:/workspace -w /workspace --name patchcore tiskw/patchcore:cpu-2022-03-01
+```
+
+If you need GPU support, please use the Docker image with CUDA libraries:
+
+```console
+docker run --rm -it -v `pwd`:/workspace -w /workspace --name patchcore tiskw/patchcore:gpu-2022-03-01
 ```
 
 See [this document](SETUP.md) for more details.
