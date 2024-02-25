@@ -3,8 +3,10 @@ This module provides a feature extractor which extract intermediate features
 from a neural network model and reshape it to a convenient format for PatchCore.
 """
 
+# Import standard libraries.
 import warnings
 
+# Import third-party packages.
 import numpy as np
 import rich
 import rich.progress

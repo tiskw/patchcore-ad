@@ -2,25 +2,20 @@
 PatchCore anomaly detection: main script for MVTec AD dataset
 """
 
+# Import standard libraries.
 import argparse
 import os
 import pathlib
 import subprocess
 
-import cv2 as cv
-import numpy as np
+# Import third-party packages.
 import rich
 import rich.progress
-import sklearn.metrics
-import scipy.ndimage
 import torch
-import torchvision
 
+# Import custom modules.
 from patchcore.dataset   import MVTecAD
-from patchcore.extractor import FeatureExtractor
-from patchcore.knnsearch import KNNSearcher
 from patchcore.patchcore import PatchCore
-from patchcore.utils     import Timer
 
 
 def parse_args():
@@ -147,7 +142,6 @@ def main_runall(args):
     for dirpath in sorted(dirpaths):
 
         program  = "python3 main_mvtecad.py " + ("test" if args.test_only else "train")
-        datadir  = dirpath.parent
         category = dirpath.name
         model    = args.model
         repo     = args.repo

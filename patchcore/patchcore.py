@@ -2,10 +2,11 @@
 This module provides a class for PatchCore algorithm.
 """
 
-import argparse
+# Import standard libraries.
 import os
 import pathlib
 
+# Import third-party packages.
 import cv2 as cv
 import numpy as np
 import rich
@@ -13,9 +14,8 @@ import rich.progress
 import sklearn.metrics
 import scipy.ndimage
 import torch
-import torchvision
 
-from patchcore.dataset   import MVTecAD
+# Import custom modules.
 from patchcore.extractor import FeatureExtractor
 from patchcore.knnsearch import KNNSearcher
 from patchcore.utils     import Timer
@@ -197,13 +197,14 @@ class PatchCore:
 
         return (anomaly_map_rw, score)
 
-    def save_anomaly_map(self, dirpath, anomaly_map, filepath, x_type):
+    def save_anomaly_map(self, dirpath, anomaly_map, filepath, x_type, contour=None):
         """
         Args:
-            anomaly_map   (np.ndarray): Anomaly detection result with the same
-                                        size as the input image.
-            filepath      (str)       : Path of the input image.
-            x_type        (str)       : Anomaly type (e.g. "good", "crack", etc).
+            dirpath     (str)       : Output directory path.
+            anomaly_map (np.ndarray): Anomaly map with the same size as the input image.
+            filepath    (str)       : Path of the input image.
+            x_type      (str)       : Anomaly type (e.g. "good", "crack", etc).
+            contour     (float)     : Threshold of contour, or None.
         """
         def min_max_norm(image):
             a_min, a_max = image.min(), image.max()
@@ -216,13 +217,51 @@ class PatchCore:
         dirpath = pathlib.Path(dirpath)
         dirpath.mkdir(parents=True, exist_ok=True)
 
-        # Get file name.
+        # Get the image file name.
         filename = os.path.basename(filepath)
 
-        # Normalize anomaly map for easier visualization.
-        anomaly_map_norm = cvt2heatmap(255 * min_max_norm(anomaly_map))
-        original_image   = cv.resize(cv.imread(filepath), anomaly_map_norm.shape[:2])
-        output_image     = (anomaly_map_norm / 2 + original_image / 2).astype(np.uint8)
+        # Load the image file and resize.
+        original_image = cv.imread(filepath)
+        original_image = cv.resize(original_image, anomaly_map.shape[:2])
+
+        # Visualize heat map.
+        if contour is None:
+
+            # Normalize anomaly map for easier visualization.
+            anomaly_map_norm = cvt2heatmap(255 * min_max_norm(anomaly_map))
+
+            # Overlay the anomaly map to the origimal image.
+            output_image = (anomaly_map_norm / 2 + original_image / 2).astype(np.uint8)
+
+        # Visualize contour map.
+        else:
+
+            # Additional smoothing for better contour visualization.
+            anomaly_map = cv.GaussianBlur(anomaly_map, (5, 5), 3)
+
+            # Compute binary map to compute contour.
+            binary_map = np.where(anomaly_map >= contour, 255, 0).astype(np.uint8)
+
+            # Compute contour.
+            contour_coord, hierarchy = cv.findContours(binary_map, cv.RETR_LIST, cv.CHAIN_APPROX_SIMPLE)
+
+            # Ignore small anomalies.
+            w, h = original_image.shape[0:2]
+            areas = [cv.contourArea(contour_pts) / w / h for contour_pts in contour_coord]
+            contour_coord = [contour_pts for contour_pts, area in zip(contour_coord, areas) if area > 0.005]
+
+            # Initialize contour image.
+            contour_map = original_image.copy()
+
+            # Fill inside of all contours.
+            for idx in range(len(contour_coord)):
+                contour_map = cv.fillPoly(contour_map, [contour_coord[idx][:,0,:]], (0,165,255))
+
+            # Overray the filled image to the original image.
+            contour_map = (0.6 * original_image + 0.4 * contour_map).astype(np.uint8)
+
+            # Draw contour edges.
+            output_image = cv.drawContours(contour_map, contour_coord, -1, (0,165,255), 2)
 
         # Save the normalized anomaly map as image.
         cv.imwrite(str(dirpath / f"{x_type}_{filename}.jpg"), output_image)

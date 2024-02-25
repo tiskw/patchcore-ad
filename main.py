@@ -2,24 +2,19 @@
 PatchCore anomaly detection: main script for user custom dataset
 """
 
+# Import standard libraries.
 import argparse
-import os
-import pathlib
 
-import cv2 as cv
+# Import third-party packages.
 import numpy as np
 import rich
 import rich.progress
-import sklearn.metrics
-import scipy.ndimage
 import torch
-import torchvision
 
+# Import custom modules.
 from patchcore.dataset   import MVTecADImageOnly
-from patchcore.extractor import FeatureExtractor
-from patchcore.knnsearch import KNNSearcher
 from patchcore.patchcore import PatchCore
-from patchcore.utils     import Timer
+from patchcore.utils     import auto_threshold
 
 
 def parse_args():
@@ -30,7 +25,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description=__doc__, add_help=False, formatter_class=fmtcls)
 
     # Required arguments.
-    parser.add_argument("mode", choices=["train", "predict"], help="running mode")
+    parser.add_argument("mode", choices=["train", "predict", "thresh"], help="running mode")
 
     # Optional arguments for dataset configuration.
     group1 = parser.add_argument_group("dataset options")
@@ -61,13 +56,23 @@ def parse_args():
     group3.add_argument("-s", "--sampling_ratio", metavar="FLT", default=0.01,
                         help="ratio of coreset sub-sampling")
 
+    # Optional arguments for thresholding.
+    group4 = parser.add_argument_group("thresholding options")
+    group4.add_argument("-e", "--coef_sigma", metavar="FLT", type=float, default=5.0,
+                        help="coefficient of sigma when computing threshold (= mean + coef * sigma)")
+
+    # Optional arguments for visualization.
+    group5 = parser.add_argument_group("visualization options")
+    group5.add_argument("-c", "--contour", metavar="FLT", type=float, default=None,
+                        help="visualize contour map instead of heatmap using the given threshold")
+
     # Other optional arguments.
-    group4 = parser.add_argument_group("other options")
-    group4.add_argument("-d", "--device", metavar="STR", default="auto",
+    group6 = parser.add_argument_group("other options")
+    group6.add_argument("-d", "--device", metavar="STR", default="auto",
                         help="device name (e.g. 'cuda')")
-    group4.add_argument("-w", "--num_workers", metavar="INT", type=int, default=1,
+    group6.add_argument("-w", "--num_workers", metavar="INT", type=int, default=1,
                         help="number of available CPUs")
-    group4.add_argument("-h", "--help", action="help",
+    group6.add_argument("-h", "--help", action="help",
                         help="show this help message and exit")
 
     return parser.parse_args()
@@ -129,7 +134,35 @@ def main(args):
             anomaly_map_rw = model.predict(x, args.n_neighbors)
 
             # Save anomaly heatmap (JPG image and NPY file).
-            model.save_anomaly_map(args.output, anomaly_map_rw, filepath[0], x_type[0])
+            model.save_anomaly_map(args.output, anomaly_map_rw, filepath[0], x_type[0], contour=args.contour)
+
+    elif args.mode == "thresh":
+
+        # Load trained model.
+        model.load(args.trained)
+
+        # Prepare dataset.
+        dataset = MVTecADImageOnly(args.input, **dataset_args)
+        dloader = torch.utils.data.DataLoader(dataset, batch_size=1, num_workers=args.num_workers, pin_memory=True)
+
+        # Initialize the anomaly scores.
+        scores = list()
+
+        # Compute max value of the anomaly heatmaps.
+        for x, gt, label, filepath, x_type in rich.progress.track(dloader, description="Processing..."):
+
+            # Run prediction and get anomaly heatmap.
+            anomaly_map_rw = model.predict(x, args.n_neighbors)
+
+            # Append the anomaly score.
+            scores.append(np.max(anomaly_map_rw))
+
+        # Compute threshold.
+        thresh, score_mean, score_std = auto_threshold(scores, args.coef_sigma)
+
+        print("Anomaly threshold = %f" % thresh)
+        print("  - score_mean = %f" % score_mean)
+        print("  - score_std  = %f" % score_std)
 
 
 if __name__ == "__main__":
