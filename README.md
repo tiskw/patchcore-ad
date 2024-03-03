@@ -109,6 +109,42 @@ python3 main_mvtecad.py summarize
 The `python3 main_mvtecad.py runall` command will take a quite long time,
 therefore it is a good idea to wrap the above command by `nohup`.
 
+### Anomalous area visualization
+
+If you want the visualizatino of the anomalous area for each sample like
+the following figure, you can try `--contour` option in the prediction
+step. The following is the details of steps to generate the anomalous
+area visualization.
+
+<div align="center">
+    <img width="672px" src="experiments/figures/anomalous_area_visualization.jpg" />
+</div>
+
+At first, the training data is located under `data_train/` directory,
+and we assume that you completed the training of the model:
+
+```console
+# Train the PatchCore model.
+python3 main.py train -i data_train -o ./index.faiss
+```
+
+Next, we need to compute the threshold for determining the anomalous area
+for each samples. You can compute the threshold by the following command:
+
+```console
+# Compute threshold.
+python3 main.py thresh -i data_train
+```
+
+Finally, you can get the anomalouse area visualization by the following command
+where we assume that the test data is located under `data_test/` directory
+and `THRESH` is the threshold value computed in the previous step:
+
+```console
+# Visualize contour map using the threshold value obtained by the above.
+python3 main.py predict --contour THRESH -i data_test -o output_test
+```
+
 
 Experiments
 --------------------------------------------------------------------------------

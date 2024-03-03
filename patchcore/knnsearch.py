@@ -4,6 +4,7 @@ and sampling algorithms which returns a set of points that minimizes
 the maximum distance of any point to a center.
 """
 
+# Import third-party packages.
 import faiss
 import numpy as np
 import rich

@@ -2,16 +2,14 @@
 This module provides a PyTorch implementation of the MVTec AD dataset.
 """
 
-import glob
-import os
+# Import standard libraries.
 import pathlib
 
+# Import third-party packages.
 import numpy as np
 import PIL.Image
 import torch
 import torchvision
-
-import rich
 
 
 class MVTecAD(torch.utils.data.Dataset):
